@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <link rel="stylesheet" href="CSS/index.css">
+</head>
+<body>
+<div id="app">
+    <my-app></my-app>
+</div>
+<script src="js/vue.js"></script>
+<script type="text/template" id="tpl">
+<div class="">
+    <ul>
+        <li class="button" v-for="item in types" @click="sortBy(item.key)">{{item.value}}</li>
+    </ul>
+    <ul>
+        <li v-for="item in list" class="container">
+            <div class="img">
+                <img v-bind:src="item.img"></img>
+                <div class="layer">
+                    <p>找相似</p>
+                    <p>找同款</p>
+                </div>
+            </div>
+            <div class="content">
+                <p class="price-info">
+                    <span class="price">{{item.price}}</span>
+                    <span class="sales"><strong>销量 </strong>{{item.sales}}</span>
+                </p>
+                <p class="title">{{item.title}}</p>
+                <p class="store-info">
+                    <span class="store"><strong>店铺 </strong>{{item.store}}</span>
+                    <span class="address"><strong>地址 </strong>{{item.adress}}</span>
+                </p>
+            </div>
+        </li>
+    </ul>
+</div>
+</script>
+
+<script>
+    var util = {
+        getId: function (id) {
+            return document.getElementById(id);
+        },
+        ajax: function (url, callback) {
+            var xhr = new XMLHttpRequest();
+            xhr.open("get", url, true);
+            xhr.send(null);
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState == 4 && xhr.status == 200) {
+                    var data = JSON.parse(xhr.responseText);
+                    callback && callback(data);
+                }
+
+            };
+
+
+        }
+    };
+    var tpl = util.getId("tpl").innerHTML;
+    Vue.component("my-app", {
+        template: tpl,
+        data: function () {
+            return {
+                list: "",
+                types: [
+                    {"key": "comprehensive", "value": "綜合排序"},
+                    {"key": "sales", "value": "銷量排"},
+                    {"key": "price", "value": "價格排序"}
+                ]
+            }
+        },
+        created: function () {
+            var self = this;
+            util.ajax("data/list.json", function (data) {
+                self.list = data.list;
+
+            });
+        },
+        methods: {
+            sortBy: function (key) {
+                switch(key) {
+                    case "comprehensive":
+//                        console.log(this)
+                        this.list.sort((a, b) => {
+                            return Math.random()-0.5;
+                        });
+                        break;
+                    case "sales":
+                        this.list.sort((a, b) => {
+                            return a.sales - b.sales;
+//                            console.log(a, b);
+                        });
+                        break;
+                    case "price":
+                        this.list.sort((a, b) => {
+                            return a.price - b.price;
+                        });
+                        break;
+                }
+            }
+        }
+    });
+    var vm = new Vue({
+        el: "#app"
+    });
+</script>
+</body>
+</html>

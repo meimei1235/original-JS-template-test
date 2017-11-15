@@ -3,104 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <title>原生js模板引擎练习</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-        }
-        #app {
-            width: 80%;
-            margin: 20px auto;
-            overflow: hidden;
-        }
-        .container {
-            width: 200px;
-            height:420px;
-            position: relative;
-            border: 1px solid #ccc;
-            float: left;
-            margin: 5px;
-            overflow: hidden;
-        }
-        .img {
-            width: 100%;
-        }
-        .img>img {
-            width: 200px;
-            height:250px;
-        }
-        .layer {
-            position: absolute;
-            width:100%;
-            padding:10px 0;
-            top: 210px;
-            border: 1px solid #ccc;
-            background-color: red;
-            color: #fff;
-            /*display: none;*/
-        }
-        .layer:hover {
-            display: block;
-        }
-        .layer>p {
-            float: left;
-            text-align: center;
-            width: 100px;
-        }
-        .content {
-            width: 100%;
-            height: 166px;
-            background-color: #ccc;
-            /*position: relative;*/
-        }
-        .content span {
-            display: block;
-
-            /*float: left;*/
-        }
-        .price-info, .store-info {
-            width: 100%;
-            overflow: hidden;
-            display: flex;
-            justify-content: space-between;
-        }
-        .price-info>span, .store-info>span {
-            padding: 5px;
-        }
-        .title {
-            width: 100%;
-            padding: 10px;
-            text-align: center;
-        }
-    </style>
-    <script src="text/template" id="tpl">
-        <div class="container">
-            <div class="img">
-            <img src="{img}"></img>
-            <div class="layer">
-            <p>找相似</p>
-            <p>找同款</p>
-            </div>
-            </div>
-            <div class="content">
-            <p class="price-info">
-            <span class="price">￥{price}</span>
-            <span class="sales"><strong>销量 </strong>{sales}</span>
-            </p>
-            <p class="title">{title}</p>
-            <p class="store-info">
-            <span class="store"><strong>店铺 </strong>{store}</span>
-            <span class="address"><strong>地址 </strong>{adress}</span>
-            </p>
-            </div>
-            </div>
-    </script>
+    <link rel="stylesheet" href="CSS/index.css">
 </head>
 <body>
- <div class="box" id="app">
-     <!--<div class="container">
+ <div id="app">
+     <div id="button">
+         <ul>
+             <li class="button"  value="0">综合排序</li>
+             <li class="button"  value="1">销量排序</li>
+             <li class="button" value="2">价格排序</li>
+         </ul>
+     </div>
+ </div>
+ <script type="text/template" id="tpl">
+     <div class="container">
          <div class="img">
-             <img src="images\1.jpg"></img>
+            <img src="{img}"></img>
              <div class="layer">
                  <p>找相似</p>
                  <p>找同款</p>
@@ -108,19 +26,18 @@
          </div>
          <div class="content">
              <p class="price-info">
-                <span class="price">价格</span>
-                <span class="sales">销量</span>
+                <span class="price">￥{price}</span>
+                <span class="sales"><strong>销量 </strong>{sales}</span>
              </p>
-             <p class="title">标题</p>
+             <p class="title">{title}</p>
              <p class="store-info">
-                 <span class="store">库存量</span>
-                 <span class="address">地址</span>
+                 <span class="store"><strong>店铺 </strong>{store}</span>
+                 <span class="address"><strong>地址 </strong>{adress}</span>
              </p>
          </div>
-     </div>-->
- </div>
-
- <script type="text/javascript">
+     </div>
+ </script>
+ <script type="text/javascript" >
  var util = {
      getId: function (id) {
          return document.getElementById(id);
@@ -132,10 +49,6 @@
          xhr.onreadystatechange = function () {
              if (xhr.readyState == 4 && xhr.status == 200) {
                  var data = JSON.parse(xhr.responseText);
-//                 console.log(data);
-                 /*if (callback) {
-                     callback(data);
-                 }*/
                  callback && callback(data);
              }
 
@@ -144,31 +57,73 @@
 
      }
  };
+
  var url = "data/list.json";
  var html = "";
  var tpl = util.getId('tpl').innerHTML;
+ var app = util.getId("app");
+ var lis = document.querySelectorAll(".button");
+
+
+
  util.ajax(url, function (data) {
      var list = data.list;
-//     console.log(list)
-     for (var i = 0, len = list.length; i< len; i++) {
-//         console.log(list[i])
-         html += processData(tpl, list[i]);
-     }
-//     console.log(processData(tpl, list[0]));
-     app.innerHTML = html;
-
-
+     getHtml(list);
+     lis.forEach(item => {
+//         console.log(item)
+         item.onclick = function () {
+             console.log(item)
+             mySort(this.value, list);
+             getHtml(list);
+         }
+     });
 
  });
 
+ function getHtml(list) {
+     for (var i = 0, len = list.length; i < len; i++) {
+         html += processData(tpl, list[i]);
+     }
+//     console.log(app.innerHTML);
+     app.innerHTML += html;
+     html = "";
+ }
+/*
+ * @param
+ * value: 按钮值
+ * list: ajax请求的data.list
+ * */
+ function mySort(value, list) {
+//     console.log(list)
+     switch(value) {
+         case 0:
+             list.sort((a, b) => {
+                 return Math.random()-0.5;
+             });
+             break;
+         case 1:
+             list.sort((a, b) => {
+                 return b.sales - a.sales;
+             });
+             break;
+         case 2:
+             list.sort((a, b) => {
+                 return a.price - b.price;
+             });
+             break;
+     }
+ }
+
  function processData(tpl, data) {
      var regex = /\{(\w+)\}/g;
-     console.log(data);
+//     console.log(data);
      return tpl.replace(regex, function (match, $1) {
         return data[$1];
 
    });
  }
+
+
 </script>
 </body>
 </html>

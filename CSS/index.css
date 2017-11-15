@@ -1,0 +1,89 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+ul {
+    overflow: hidden;
+}
+ul li {
+    list-style: none;
+}
+#app {
+    width: 80%;
+    margin: 20px auto;
+    overflow: hidden;
+}
+.button {
+    width:100px;
+    padding: 5px 10px;
+    text-align: center;
+    float: left;
+    background-color: #cccccc;
+    border: 1px solid black;
+    margin-right:5px;
+    box-sizing: border-box;
+    cursor: pointer;
+}
+.button:hover {
+    background-color: #F55B24;
+}
+.container {
+    width: 200px;
+    height:420px;
+    position: relative;
+    border: 1px solid #ccc;
+    float: left;
+    margin: 5px;
+    overflow: hidden;
+}
+.img {
+    width: 100%;
+}
+.img>img {
+    width: 200px;
+    height:250px;
+}
+.layer {
+    position: absolute;
+    width:100%;
+    padding:10px 0;
+    top: 210px;
+    border: 1px solid #ccc;
+    background-color: red;
+    color: #fff;
+    display: none;
+}
+.container:hover .layer {
+    display: block;
+}
+.layer>p {
+    float: left;
+    text-align: center;
+    width: 100px;
+    cursor: pointer;
+}
+.content {
+    width: 100%;
+    height: 166px;
+    background-color: #ccc;
+    /*position: relative;*/
+}
+.content span {
+    display: block;
+
+    /*float: left;*/
+}
+.price-info, .store-info {
+    width: 100%;
+    overflow: hidden;
+    display: flex;
+    justify-content: space-between;
+}
+.price-info>span, .store-info>span {
+    padding: 5px;
+}
+.title {
+    width: 100%;
+    padding: 10px;
+    /*text-align: center;*/
+}
